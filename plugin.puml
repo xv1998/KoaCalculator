@@ -1,0 +1,30 @@
+@startuml
+title
+    校园网登陆方案
+end title
+actor user
+participant user
+participant "APP" as app
+participant "浏览器" as web
+participant "业务后台" as backend
+participant "oauth平台" as oauth
+
+
+user -> app: 点击校园网登陆
+app -> backend: 查询信息认证(from:mini)
+backend -> app: oauth相关信息
+app -> web: 跳转到浏览器登陆页面并带上Oauth部分信息(client_id、state、scope)
+web -> user: 登陆页面
+user -> web: 账号密码
+web -> oauth: 登陆(username、password)
+oauth ->web: 登陆成功
+web -> user: 授权页面
+user -> web: 确定授权
+web -> oauth: 授权(response_type=code、client_id、state、scope、from=mini)
+oauth -> web: 授权码(authorizetion_code)
+web -> app: 授权码
+app -> backend: 重定向(授权码和state)
+backend -> app: skey
+app -> user: 授权成功
+
+@enduml
